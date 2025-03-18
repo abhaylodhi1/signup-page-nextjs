@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -8,19 +9,22 @@ import * as z from 'zod';
 import useAuthStore from '../store/store';
 
 const signupSchema = z.object({
-  full_name: z.string().min(3, 'Full Name must be at least 3 characters'),
-  email: z.string().email('Invalid email format'),
+  full_name: z.string().min(1, 'Please enter your full name'),
+  email: z.string().email('Please enter a valid email'),
   gender: z.enum(['male', 'female', 'other'], {
-    message: 'Gender is required',
+    message: 'please select your gender',
   }),
   department: z.enum(['HR', 'IT', 'Sales', 'Marketing', 'Finance'], {
-    message: 'Department is required',
+    message: 'please select your department',
   }),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  birthdate: z.string().min(1, 'Date of Birth is required'),
+  password: z
+    .string()
+    .min(6, 'Please enter a password which is at least 6 characters long'),
+  birthdate: z.string().min(1, 'please select your birthdate'),
 });
 
 export default function Signup() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -30,7 +34,7 @@ export default function Signup() {
     resolver: zodResolver(signupSchema),
   });
 
-  const { signup, loading, error, success } = useAuthStore();
+  const { signup, loading } = useAuthStore();
 
   const [birthdate, setBirthdate] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
@@ -49,7 +53,7 @@ export default function Signup() {
     }
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append('full_name', data.full_name);
     formData.append('email', data.email);
@@ -61,7 +65,11 @@ export default function Signup() {
       formData.append('profile_picture', profilePicture);
     }
 
-    signup(formData);
+    const response = await signup(formData);
+    console.log('response', response);
+    if (response?.success) {
+      router.push('/login');
+    }
   };
 
   return (
@@ -90,9 +98,6 @@ export default function Signup() {
         <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
           Create an Account
         </h2>
-
-        {error && <p className="text-red-500 text-center">{error}</p>}
-        {success && <p className="text-green-500 text-center">{success}</p>}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
@@ -198,6 +203,18 @@ export default function Signup() {
             {loading ? 'Registering...' : 'Signup'}
           </button>
         </form>
+        <div className="mt-4 text-center">
+          <p className="text-gray-600">
+            Already have an account?{' '}
+            <button
+              type="button"
+              onClick={() => router.push('/login')}
+              className="text-blue-500 hover:underline"
+            >
+              Login
+            </button>
+          </p>
+        </div>
       </div>
     </div>
   );

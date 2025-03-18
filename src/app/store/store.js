@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { create } from 'zustand';
 
 const useAuthStore = create((set) => ({
@@ -7,7 +9,6 @@ const useAuthStore = create((set) => ({
   error: null,
   success: null,
 
-  // 🔹 Signup Function
   signup: async (formData) => {
     set({ loading: true, error: null, success: null });
 
@@ -17,36 +18,51 @@ const useAuthStore = create((set) => ({
       });
 
       set({ success: response.data.message, error: null });
+
+      toast.success(response.data.message);
+      return response.data;
     } catch (err) {
-      console.error('Signup Error:', err); // ✅ Logging the error
-      set({ error: err.response?.data?.error || 'Signup failed' });
+      // Handle the error
+      const errorMessage = err.response?.data?.error || 'Signup failed';
+      set({ error: errorMessage });
+
+      // Log the error for debugging
+      console.error('Signup Error:', err);
+      toast.error(errorMessage);
+
+      return { success: false, error: errorMessage };
     } finally {
       set({ loading: false });
     }
   },
 
-  // 🔹 Login Function
   login: async (credentials) => {
     set({ loading: true, error: null });
-
     try {
       const response = await axios.post('/api/login', credentials);
-      localStorage.setItem('token', response.data.token); // ✅ Store token
+      localStorage.setItem('token', response.data.token);
 
       set({
         user: response.data.user,
         success: 'Login successful',
         error: null,
       });
+
+      toast.success(response.data.message);
+      return response.data;
     } catch (err) {
-      console.error('Login Error:', err); // ✅ Logging the error
-      set({ error: err.response?.data?.error || 'Invalid credentials' });
+      const errorMessage = err.response?.data?.error || 'Invalid credentials';
+      set({ error: errorMessage });
+
+      // Log the error for debugging
+      console.error('Login Error:', err);
+      toast.error(errorMessage);
+      throw err;
     } finally {
       set({ loading: false });
     }
   },
 
-  // 🔹 Fetch User Function
   fetchUser: async () => {
     set({ loading: true });
 
@@ -60,20 +76,27 @@ const useAuthStore = create((set) => ({
 
       set({ user: response.data, error: null });
     } catch (err) {
-      console.error('Fetch User Error:', err); // ✅ Logging the error
+      // Handle the error
       set({ user: null, error: 'Failed to fetch user' });
       localStorage.removeItem('token');
+
+      // Log the error for debugging
+      console.error('Fetch User Error:', err);
+      toast.error('Failed to fetch user');
     } finally {
       set({ loading: false });
     }
   },
 
-  // 🔹 Logout Function
   logout: async () => {
     try {
-      await axios.get('/api/logout');
+      const response = await axios.get('/api/logout');
+      toast.success(response.data.message);
     } catch (err) {
-      console.error('Logout failed:', err); // ✅ Logging the error
+      toast.error('Failed to logout');
+
+      // Log the error for debugging
+      console.error('Logout Error:', err);
     }
 
     localStorage.removeItem('token');

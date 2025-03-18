@@ -19,7 +19,7 @@ export default function Dashboard() {
     }
 
     fetchUser();
-  }, []);
+  }, [fetchUser, router]);
 
   return (
     <div className="min-h-screen bg-gray-100">

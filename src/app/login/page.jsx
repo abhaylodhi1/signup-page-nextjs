@@ -1,29 +1,26 @@
 'use client';
 
-import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+
+import useAuthStore from '../store/store';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const { login, error: authError } = useAuthStore();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
-      const res = await axios.post('/api/login', { email, password });
-
-      if (res.status === 200) {
-        localStorage.setItem('token', res.data.token);
-
-        router.push('/dashboard');
-      }
+      await login({ email, password });
+      router.push('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(authError || 'Login failed');
     }
   };
 
@@ -33,19 +30,19 @@ export default function Login() {
         onSubmit={handleLogin}
         className="bg-white p-6 rounded shadow-md w-80"
       >
-        <h2 className="text-xl font-semibold mb-4">Login</h2>
-        {error && <p className="text-red-500">{error}</p>}
+        <h2 className="text-xl font-semibold mb-4 text-black">Login</h2>
+
         <input
           type="email"
           placeholder="Email"
-          className="w-full p-2 border rounded mb-2"
+          className="w-full p-2 border rounded mb-2 text-black"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
         <input
           type="password"
           placeholder="Password"
-          className="w-full p-2 border rounded mb-4"
+          className="w-full p-2 border rounded mb-4 text-black"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

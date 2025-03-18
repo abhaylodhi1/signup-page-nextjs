@@ -7,7 +7,6 @@ const SECRET_KEY = 'your_secret_key';
 
 export async function GET(req) {
   try {
-    // 🔹 Extract and verify JWT token
     const authHeader = req.headers.get('Authorization');
     const token = authHeader?.split(' ')[1];
 
@@ -28,7 +27,7 @@ export async function GET(req) {
 
     return NextResponse.json(users[0], { status: 200 });
   } catch (err) {
-    console.error('Error fetching user:', err); // ✅ Log the error to use the variable
+    console.error('Error fetching user:', err);
     return NextResponse.json({ error: 'Invalid Token' }, { status: 403 });
   }
 }

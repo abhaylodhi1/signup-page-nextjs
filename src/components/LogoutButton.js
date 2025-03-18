@@ -5,8 +5,6 @@ import { useState } from 'react';
 
 import LogoutButton from '@/components/LogoutButton';
 
-// Import LogoutButton
-
 export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const router = useRouter();
