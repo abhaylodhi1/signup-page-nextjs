@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { create } from 'zustand';
@@ -22,11 +23,9 @@ const useAuthStore = create((set) => ({
       toast.success(response.data.message);
       return response.data;
     } catch (err) {
-      // Handle the error
       const errorMessage = err.response?.data?.error || 'Signup failed';
       set({ error: errorMessage });
 
-      // Log the error for debugging
       console.error('Signup Error:', err);
       toast.error(errorMessage);
 
@@ -40,7 +39,11 @@ const useAuthStore = create((set) => ({
     set({ loading: true, error: null });
     try {
       const response = await axios.post('/api/login', credentials);
-      localStorage.setItem('token', response.data.token);
+
+      Cookies.set('token', response.data.token, {
+        expires: 7,
+        secure: process.env.NODE_ENV === 'production',
+      });
 
       set({
         user: response.data.user,
@@ -54,7 +57,6 @@ const useAuthStore = create((set) => ({
       const errorMessage = err.response?.data?.error || 'Invalid credentials';
       set({ error: errorMessage });
 
-      // Log the error for debugging
       console.error('Login Error:', err);
       toast.error(errorMessage);
       throw err;
@@ -67,7 +69,7 @@ const useAuthStore = create((set) => ({
     set({ loading: true });
 
     try {
-      const token = localStorage.getItem('token');
+      const token = Cookies.get('token');
       if (!token) throw new Error('Unauthorized');
 
       const response = await axios.get('/api/profile', {
@@ -76,11 +78,9 @@ const useAuthStore = create((set) => ({
 
       set({ user: response.data, error: null });
     } catch (err) {
-      // Handle the error
       set({ user: null, error: 'Failed to fetch user' });
-      localStorage.removeItem('token');
+      Cookies.remove('token');
 
-      // Log the error for debugging
       console.error('Fetch User Error:', err);
       toast.error('Failed to fetch user');
     } finally {
@@ -95,11 +95,10 @@ const useAuthStore = create((set) => ({
     } catch (err) {
       toast.error('Failed to logout');
 
-      // Log the error for debugging
       console.error('Logout Error:', err);
     }
 
-    localStorage.removeItem('token');
+    Cookies.remove('token');
     set({ user: null, success: 'Logged out successfully', error: null });
   },
 }));

@@ -1,20 +1,13 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
 import useAuthStore from '../store/store';
 
 export default function Profile() {
   const { user, fetchUser } = useAuthStore();
-  const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
     fetchUser();
   }, []);
 
