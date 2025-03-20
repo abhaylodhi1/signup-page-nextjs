@@ -80,7 +80,7 @@ export default function Signup() {
       className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}
     >
-      <div className="w-full max-w-md bg-opacity-60 backdrop-blur-sm p-6 rounded-4xl shadow-lg">
+      <div className="w-full max-w-md bg-opacity-50 backdrop-blur-md p-6 rounded-4xl shadow-lg">
         <div className="flex flex-col items-center mb-4">
           <div className="w-24 h-24 rounded-full border-2 border-gray-300 overflow-hidden">
             {previewUrl ? (
@@ -90,7 +90,7 @@ export default function Signup() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="flex items-center justify-center w-full h-full bg-transparent text-gray-500 text-sm">
+              <div className="flex items-center justify-center w-full h-full bg-transparent text-white text-sm">
                 No Image
               </div>
             )}
@@ -108,9 +108,7 @@ export default function Signup() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-600 font-medium">
-                Full Name
-              </label>
+              <label className="block text-white  font-medium">Full Name</label>
               <input
                 type="text"
                 {...register('full_name')}
@@ -125,7 +123,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-gray-600 font-medium">Email</label>
+              <label className="block text-white  font-medium">Email</label>
               <input
                 type="email"
                 {...register('email')}
@@ -140,7 +138,7 @@ export default function Signup() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-gray-600 font-medium">Gender</label>
+              <label className="block text-white  font-medium">Gender</label>
               <select
                 {...register('gender')}
                 className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
@@ -156,7 +154,7 @@ export default function Signup() {
             </div>
 
             <div>
-              <label className="block text-gray-600 font-medium">
+              <label className="block text-white  font-medium">
                 Department
               </label>
               <select
@@ -179,7 +177,7 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-gray-600 font-medium">Password</label>
+            <label className="block text-white  font-medium">Password</label>
             <input
               type="password"
               {...register('password')}
@@ -192,7 +190,7 @@ export default function Signup() {
           </div>
 
           <div>
-            <label className="block text-gray-600 font-medium">
+            <label className="block text-white  font-medium">
               Date of Birth
             </label>
             <Flatpickr

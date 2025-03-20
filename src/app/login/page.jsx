@@ -39,7 +39,7 @@ export default function Login() {
           {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
           <div>
-            <label className="block text-gray-600 font-medium">Email</label>
+            <label className="block text-white font-medium">Email</label>
             <input
               type="email"
               placeholder="Enter your email"
@@ -50,7 +50,7 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-gray-600 font-medium">Password</label>
+            <label className="block text-white font-medium">Password</label>
             <input
               type="password"
               placeholder="Enter your password"
