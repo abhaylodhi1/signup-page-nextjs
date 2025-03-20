@@ -1,11 +1,14 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import 'flatpickr/dist/flatpickr.min.css';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Flatpickr from 'react-flatpickr';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import bgImage from '../../../public/images/background.jpg';
 import useAuthStore from '../store/store';
 
 const signupSchema = z.object({
@@ -73,8 +76,11 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-lg">
+    <div
+      className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: `url(${bgImage.src})` }}
+    >
+      <div className="w-full max-w-md bg-opacity-60 backdrop-blur-sm p-6 rounded-4xl shadow-lg">
         <div className="flex flex-col items-center mb-4">
           <div className="w-24 h-24 rounded-full border-2 border-gray-300 overflow-hidden">
             {previewUrl ? (
@@ -84,12 +90,12 @@ export default function Signup() {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="flex items-center justify-center w-full h-full bg-gray-200 text-gray-500 text-sm">
+              <div className="flex items-center justify-center w-full h-full bg-transparent text-gray-500 text-sm">
                 No Image
               </div>
             )}
           </div>
-          <label className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-2">
+          <label className="cursor-pointer bg-gray-800 hover:bg-blue-600 text-white py-2 px-4 rounded-md mt-2">
             Upload Profile Picture
             <input type="file" onChange={handleFileChange} className="hidden" />
           </label>
@@ -100,68 +106,76 @@ export default function Signup() {
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <label className="block text-gray-600 font-medium">Full Name</label>
-            <input
-              type="text"
-              {...register('full_name')}
-              placeholder="Enter your full name"
-              className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
-            />
-            {errors.full_name && (
-              <p className="text-red-500 text-sm">{errors.full_name.message}</p>
-            )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-600 font-medium">
+                Full Name
+              </label>
+              <input
+                type="text"
+                {...register('full_name')}
+                placeholder="Enter your full name"
+                className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
+              />
+              {errors.full_name && (
+                <p className="text-red-500 text-sm">
+                  {errors.full_name.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-gray-600 font-medium">Email</label>
+              <input
+                type="email"
+                {...register('email')}
+                placeholder="Enter your email"
+                className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm">{errors.email.message}</p>
+              )}
+            </div>
           </div>
 
-          <div>
-            <label className="block text-gray-600 font-medium">Email</label>
-            <input
-              type="email"
-              {...register('email')}
-              placeholder="Enter your email"
-              className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm">{errors.email.message}</p>
-            )}
-          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-600 font-medium">Gender</label>
+              <select
+                {...register('gender')}
+                className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+              {errors.gender && (
+                <p className="text-red-500 text-sm">{errors.gender.message}</p>
+              )}
+            </div>
 
-          <div>
-            <label className="block text-gray-600 font-medium">Gender</label>
-            <select
-              {...register('gender')}
-              className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Select Gender</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-            {errors.gender && (
-              <p className="text-red-500 text-sm">{errors.gender.message}</p>
-            )}
-          </div>
-
-          <div>
-            <label className="block text-gray-600 font-medium">
-              Department
-            </label>
-            <select
-              {...register('department')}
-              className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Select Department</option>
-              <option value="HR">HR</option>
-              <option value="IT">IT</option>
-              <option value="Sales">Sales</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Finance">Finance</option>
-            </select>
-            {errors.department && (
-              <p className="text-red-500 text-sm">
-                {errors.department.message}
-              </p>
-            )}
+            <div>
+              <label className="block text-gray-600 font-medium">
+                Department
+              </label>
+              <select
+                {...register('department')}
+                className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="">Select Department</option>
+                <option value="HR">HR</option>
+                <option value="IT">IT</option>
+                <option value="Sales">Sales</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Finance">Finance</option>
+              </select>
+              {errors.department && (
+                <p className="text-red-500 text-sm">
+                  {errors.department.message}
+                </p>
+              )}
+            </div>
           </div>
 
           <div>
@@ -181,12 +195,15 @@ export default function Signup() {
             <label className="block text-gray-600 font-medium">
               Date of Birth
             </label>
-            <input
-              type="date"
-              {...register('birthdate')}
-              onChange={(e) => {
-                setBirthdate(e.target.value);
-                setValue('birthdate', e.target.value);
+            <Flatpickr
+              value={birthdate}
+              options={{ dateFormat: 'Y-m-d' }}
+              onChange={(selectedDates) => {
+                const selectedDate = selectedDates[0]
+                  ? selectedDates[0].toISOString().split('T')[0]
+                  : '';
+                setBirthdate(selectedDate);
+                setValue('birthdate', selectedDate);
               }}
               className="w-full mt-1 p-2 text-black border rounded-md focus:ring-2 focus:ring-blue-400"
             />
@@ -198,7 +215,7 @@ export default function Signup() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold p-2 rounded-md transition"
+            className="w-full bg-gray-800 hover:bg-blue-600 text-white font-semibold p-2 rounded-md transition"
           >
             {loading ? 'Registering...' : 'Signup'}
           </button>
@@ -209,7 +226,7 @@ export default function Signup() {
             <button
               type="button"
               onClick={() => router.push('/login')}
-              className="text-blue-500 hover:underline"
+              className="text-white hover:underline "
             >
               Login
             </button>

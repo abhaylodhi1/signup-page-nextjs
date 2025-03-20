@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
 import { NextResponse } from 'next/server';
 import path from 'path';
@@ -27,44 +27,38 @@ export async function POST(req) {
       !birthdate
     ) {
       return NextResponse.json(
-        { success: false, error: 'Missing required fields.' },
+        { success: false, error: 'Missing required fields' },
         { status: 400 },
       );
     }
-
-    let profilePicturePath = null;
-
-    if (profilePicture && profilePicture.name) {
-      const buffer = Buffer.from(await profilePicture.arrayBuffer());
-      const uploadDir = path.join(process.cwd(), 'public/uploads');
-
-      await mkdir(uploadDir, { recursive: true });
-
-      const filePath = path.join(uploadDir, profilePicture.name);
-      await writeFile(filePath, buffer);
-
-      profilePicturePath = `/uploads/${profilePicture.name}`;
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-    const userId = nanoid();
 
     const [existingUser] = await db.query(
       'SELECT email FROM students WHERE email = ?',
       [email],
     );
-    console.log('Existing User:', existingUser);
-
-    if (existingUser.length > 0) {
+    if (Array.isArray(existingUser) && existingUser.length > 0) {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Email already exists. Please use a different email.',
-        },
+        { success: false, error: 'Email already exists' },
         { status: 400 },
       );
     }
+
+    let profilePicturePath = null;
+    if (profilePicture && profilePicture.name) {
+      const buffer = Buffer.from(await profilePicture.arrayBuffer());
+      const uploadDir = path.join(process.cwd(), 'public/uploads');
+
+      await mkdir(uploadDir, { recursive: true });
+      const ext = path.extname(profilePicture.name);
+      const uniqueFileName = `${nanoid()}${ext}`;
+      const filePath = path.join(uploadDir, uniqueFileName);
+      await writeFile(filePath, buffer);
+
+      profilePicturePath = `/uploads/${uniqueFileName}`;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const userId = nanoid();
 
     await db.query(
       'INSERT INTO students (id, full_name, email, gender, department, password, birthdate, profile_picture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
@@ -89,10 +83,7 @@ export async function POST(req) {
 
     if (error.code === 'ER_DUP_ENTRY') {
       return NextResponse.json(
-        {
-          success: false,
-          error: 'Email already registered. Try logging in instead.',
-        },
+        { success: false, error: 'Email already registered. Try logging in.' },
         { status: 400 },
       );
     }

@@ -1,10 +1,9 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 import { db } from '../../lib/db';
-
-const SECRET_KEY = 'your_secret_key';
 
 export async function POST(req) {
   try {
@@ -21,7 +20,7 @@ export async function POST(req) {
       email,
     ]);
 
-    if (users.length === 0) {
+    if (!Array.isArray(users) || users.length === 0) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
@@ -32,18 +31,31 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid password' }, { status: 401 });
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, {
-      expiresIn: '1h',
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      'default_secret',
+      {
+        expiresIn: '7d',
+      },
+    );
+
+    cookies().set('token', token, {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 604800,
     });
 
+    return NextResponse.json({
+      message: 'Login successful',
+      user: { id: user.id, email: user.email },
+    });
+  } catch {
+    console.error('Login Error');
     return NextResponse.json(
-      {
-        message: 'Login successful',
-        token,
-      },
-      { status: 200 },
+      { error: 'Internal server error' },
+      { status: 500 },
     );
-  } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

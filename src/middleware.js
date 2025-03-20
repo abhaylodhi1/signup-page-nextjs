@@ -1,18 +1,15 @@
+import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 
 export function middleware(req) {
-  console.error('Request URL:', req.url); // Log the full URL
-  const token = req.cookies.get('token');
-  console.error('Token:', token);
-
+  const token = cookies().get('token');
   if (!token) {
-    console.error('Redirecting to login');
+    console.log('Redirecting to login');
     return NextResponse.redirect(new URL('/login', req.url));
   }
-
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard'],
+  matcher: ['/dashboard', '/books', '/profile'],
 };
