@@ -6,21 +6,25 @@ import { db } from '../../lib/db';
 
 export async function GET() {
   try {
-    const token = cookies().get('token')?.value;
-    if (!token) {
+    const cookieStore = cookies();
+    const token = cookieStore.get('token')?.value;
+    const userId = cookieStore.get('userId')?.value;
+
+    if (!token || !userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    let decoded;
-    try {
-      decoded = jwt.verify(token, 'default_secret');
-    } catch {
-      return NextResponse.json({ error: 'Invalid Token' }, { status: 401 });
+    if (process.env.JWT_SECRET) {
+      try {
+        jwt.verify(token, process.env.JWT_SECRET);
+      } catch {
+        return NextResponse.json({ error: 'Invalid Token' }, { status: 401 });
+      }
     }
 
     const [users] = await db.query(
       'SELECT id, full_name, email, gender, department, profile_picture, birthdate FROM students WHERE id = ?',
-      [decoded.id],
+      [userId],
     );
 
     if (!users || users.length === 0) {
@@ -28,6 +32,7 @@ export async function GET() {
     }
 
     const user = users[0];
+
     if (user.birthdate) {
       user.birthdate = new Date(user.birthdate).toISOString().split('T')[0];
     }

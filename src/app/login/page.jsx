@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import bgImage from '../../../public/images/background.jpg';
+import FacebookSignIn from '../../components/facebook/facebookSignUp';
+import GithubSignIn from '../../components/github/githubSignUp';
 import GoogleSignIn from '../../components/google/googleSignIn';
 import useAuthStore from '../store/store';
 
@@ -70,6 +72,8 @@ export default function Login() {
         </form>
 
         <GoogleSignIn />
+        <GithubSignIn />
+        <FacebookSignIn />
 
         <div className="mt-4 text-center">
           <p className="text-gray-600">

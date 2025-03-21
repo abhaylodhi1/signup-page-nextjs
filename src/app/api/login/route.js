@@ -33,13 +33,21 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { id: user.id, email: user.email },
-      'default_secret',
-      {
-        expiresIn: '7d',
-      },
+      process.env.JWT_SECRET,
+      { expiresIn: '7d' },
     );
 
-    cookies().set('token', token, {
+    const cookieStore = cookies();
+
+    cookieStore.set('token', token, {
+      path: '/',
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 604800,
+    });
+
+    cookieStore.set('userId', user.id, {
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -51,8 +59,8 @@ export async function POST(req) {
       message: 'Login successful',
       user: { id: user.id, email: user.email },
     });
-  } catch {
-    console.error('Login Error');
+  } catch (error) {
+    console.error('Login Error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 },

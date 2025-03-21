@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import 'flatpickr/dist/flatpickr.min.css';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -10,6 +10,8 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import bgImage from '../../../public/images/background.jpg';
+import FacebookSignIn from '../../components/facebook/facebookSignUp';
+import GithubSignIn from '../../components/github/githubSignUp';
 import GoogleSignIn from '../../components/google/googleSignIn';
 import useAuthStore from '../store/store';
 
@@ -39,7 +41,7 @@ export default function Signup() {
     resolver: zodResolver(signupSchema),
   });
 
-  const { signup, googleLogin, loading } = useAuthStore();
+  const { signup, loading } = useAuthStore();
 
   const [birthdate, setBirthdate] = useState('');
   const [profilePicture, setProfilePicture] = useState(null);
@@ -208,7 +210,7 @@ export default function Signup() {
               </label>
               <Flatpickr
                 value={birthdate}
-                options={{ dateFormat: 'Y-m-d' }}
+                options={{ dateFormat: 'd-m-y' }}
                 onChange={(selectedDates) => {
                   const selectedDate = selectedDates[0]
                     ? selectedDates[0].toISOString().split('T')[0]
@@ -236,6 +238,8 @@ export default function Signup() {
           <div className="my-4 text-center text-white">OR</div>
 
           <GoogleSignIn />
+          <GithubSignIn />
+          <FacebookSignIn />
           <div className="mt-4 text-center">
             <p className="text-gray-600">
               Already have an account?{' '}
