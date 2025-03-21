@@ -8,19 +8,17 @@ import useAuthStore from '../store/store';
 const BooksTable = () => {
   const { books, fetchBooks, loading, error } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchField, setSearchField] = useState('all'); // Default to search all fields
+  const [searchField, setSearchField] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5; // Number of items per page
+  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchBooks();
   }, []);
 
-  // Filter books based on selected field and search query
   const filteredBooks = books.filter((book) => {
     const searchLower = searchQuery.toLowerCase();
     if (searchField === 'all') {
-      // Search across all fields
       return (
         book.id.toString().includes(searchLower) ||
         book.name.toLowerCase().includes(searchLower) ||
@@ -38,7 +36,6 @@ const BooksTable = () => {
           .includes(searchLower)
       );
     } else {
-      // Search in the selected field
       switch (searchField) {
         case 'id':
           return book.id.toString().includes(searchLower);
@@ -68,7 +65,6 @@ const BooksTable = () => {
     }
   });
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBooks = filteredBooks.slice(
@@ -172,7 +168,6 @@ const BooksTable = () => {
         />
       </div>
 
-      {/* Table */}
       <div className="w-full max-w-6xl bg-opacity-50 backdrop-blur-md rounded-xl shadow-lg overflow-hidden">
         <table className="w-full border-collapse">
           <thead className="bg-gray-800 bg-opacity-70">
@@ -231,7 +226,6 @@ const BooksTable = () => {
         </table>
       </div>
 
-      {/* Pagination */}
       <div className="flex justify-center items-center mt-6 space-x-4">
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

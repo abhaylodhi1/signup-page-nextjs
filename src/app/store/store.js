@@ -63,6 +63,40 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  googleLogin: async (googleToken) => {
+    set({ loading: true, error: null });
+
+    try {
+      const response = await api.post('/auth/google', { token: googleToken });
+
+      set({
+        user: response.data.user,
+        success: response.data.message,
+        error: null,
+      });
+
+      if (response.data.message) {
+        toast.success(response.data.message);
+      }
+      return response.data;
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        'An error occurred';
+
+      set({ error: errorMessage });
+
+      if (errorMessage) {
+        toast.error(errorMessage);
+      }
+
+      throw new Error(errorMessage);
+    } finally {
+      set({ loading: false });
+    }
+  },
+
   fetchUser: async () => {
     set({ loading: true });
     try {
@@ -74,7 +108,6 @@ const useAuthStore = create((set) => ({
         set({ user: null, error: 'User not found' });
       }
     } catch {
-      // Removed unused error parameter
       set({ user: null, error: 'Failed to fetch user' });
     } finally {
       set({ loading: false });

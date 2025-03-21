@@ -37,7 +37,6 @@ export default function Profile() {
             </button>
           </div>
 
-          {/* User Details Grid */}
           <div className="flex-1 p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className=" bg-opacity-70 backdrop-blur-md p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">

@@ -4,14 +4,15 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import bgImage from '../../../public/images/background.jpg';
+import GoogleSignIn from '../../components/google/googleSignIn';
 import useAuthStore from '../store/store';
 
 export default function Login() {
+  const router = useRouter();
+  const { login, error: authError } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
-  const { login, error: authError } = useAuthStore();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -31,13 +32,13 @@ export default function Login() {
       style={{ backgroundImage: `url(${bgImage.src})` }}
     >
       <div className="w-full max-w-md bg-opacity-60 backdrop-blur-sm p-6 rounded-4xl shadow-lg">
+        <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
+          Login
+        </h2>
+
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
         <form onSubmit={handleLogin} className="space-y-4">
-          <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
-            Login
-          </h2>
-
-          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
-
           <div>
             <label className="block text-white font-medium">Email</label>
             <input
@@ -67,6 +68,9 @@ export default function Login() {
             Login
           </button>
         </form>
+
+        <GoogleSignIn />
+
         <div className="mt-4 text-center">
           <p className="text-gray-600">
             Don't have an account?{' '}
