@@ -3,6 +3,8 @@ import { NextResponse } from 'next/server';
 
 export async function POST() {
   try {
+    const cookieStore = await cookies();
+
     const cookieOptions = {
       path: '/',
       expires: new Date(0),
@@ -11,8 +13,8 @@ export async function POST() {
       sameSite: 'Strict',
     };
 
-    cookies().set('token', '', cookieOptions);
-    cookies().set('userId', '', cookieOptions);
+    await cookieStore.set('token', '', cookieOptions); // ✅ Await set()
+    await cookieStore.set('userId', '', cookieOptions); // ✅ Await set()
 
     return NextResponse.json({ message: 'Logged out successfully' });
   } catch (error) {

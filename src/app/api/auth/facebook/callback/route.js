@@ -17,7 +17,6 @@ export async function GET(req) {
       );
     }
 
-    // Exchange code for access token
     const { data: tokenData } = await axios.get(
       `https://graph.facebook.com/v18.0/oauth/access_token`,
       {
@@ -37,7 +36,6 @@ export async function GET(req) {
       );
     }
 
-    // Fetch user profile from Facebook
     const { data: user } = await axios.get('https://graph.facebook.com/me', {
       params: {
         access_token: tokenData.access_token,
@@ -46,13 +44,13 @@ export async function GET(req) {
     });
 
     const { email, name, picture } = user;
-    if (!email)
+    if (!email) {
       return NextResponse.json(
         { error: 'Facebook account does not provide email' },
         { status: 400 },
       );
+    }
 
-    // Check if user exists in the database
     let [users] = await db.query('SELECT * FROM students WHERE email = ?', [
       email,
     ]);
@@ -70,7 +68,6 @@ export async function GET(req) {
 
     const userRecord = users[0];
 
-    // Generate JWT token
     const token = jwt.sign(
       { id: userRecord.id, email: userRecord.email },
       process.env.JWT_SECRET,
@@ -79,8 +76,8 @@ export async function GET(req) {
       },
     );
 
-    // Set authentication cookies
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
+
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

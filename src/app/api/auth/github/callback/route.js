@@ -17,7 +17,6 @@ export async function GET(req) {
       );
     }
 
-    // Exchange code for access token
     const { data: tokenData } = await axios.post(
       'https://github.com/login/oauth/access_token',
       {
@@ -36,12 +35,10 @@ export async function GET(req) {
       );
     }
 
-    // Fetch GitHub user profile
     const { data: user } = await axios.get('https://api.github.com/user', {
       headers: { Authorization: `Bearer ${tokenData.access_token}` },
     });
 
-    // Fetch user's email (GitHub does not always return email in profile)
     const { data: emails } = await axios.get(
       'https://api.github.com/user/emails',
       {
@@ -49,7 +46,6 @@ export async function GET(req) {
       },
     );
 
-    // Find primary email
     const primaryEmail = emails.find(
       (email) => email.primary && email.verified,
     )?.email;
@@ -61,7 +57,6 @@ export async function GET(req) {
       );
     }
 
-    // Check if user exists in database
     let [users] = await db.query('SELECT * FROM students WHERE email = ?', [
       primaryEmail,
     ]);
@@ -87,7 +82,8 @@ export async function GET(req) {
       },
     );
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
+
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

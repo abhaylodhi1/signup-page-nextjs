@@ -9,7 +9,6 @@ export async function GET(req) {
   try {
     const url = new URL(req.url);
     const code = url.searchParams.get('code');
-    console.log(code);
 
     if (!code) {
       return NextResponse.json(
@@ -44,8 +43,9 @@ export async function GET(req) {
     );
 
     const { email, name, picture } = user;
-    if (!email)
+    if (!email) {
       return NextResponse.json({ error: 'No email found' }, { status: 400 });
+    }
 
     let [users] = await db.query('SELECT * FROM students WHERE email = ?', [
       email,
@@ -72,7 +72,8 @@ export async function GET(req) {
       },
     );
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
+
     cookieStore.set('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',

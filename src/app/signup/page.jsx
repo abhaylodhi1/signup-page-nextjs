@@ -235,11 +235,20 @@ export default function Signup() {
               {loading ? 'Registering...' : 'Signup'}
             </button>
           </form>
-          <div className="my-4 text-center text-white">OR</div>
+          <div className="relative flex items-center my-4">
+            <hr className="w-full border-gray-300" />
+            <span className="absolute left-1/2 -translate-x-1/2  px-2 text-gray-500">
+              OR
+            </span>
+          </div>
 
-          <GoogleSignIn />
-          <GithubSignIn />
-          <FacebookSignIn />
+          <div className="mt-4 space-y-3">
+            <GoogleSignIn />
+            <div className="flex justify-center space-x-6">
+              <GithubSignIn />
+              <FacebookSignIn />
+            </div>
+          </div>
           <div className="mt-4 text-center">
             <p className="text-gray-600">
               Already have an account?{' '}

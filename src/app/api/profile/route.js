@@ -6,20 +6,29 @@ import { db } from '../../lib/db';
 
 export async function GET() {
   try {
-    const cookieStore = cookies();
-    const token = cookieStore.get('token')?.value;
-    const userId = cookieStore.get('userId')?.value;
+    const cookieStore = await cookies();
+
+    const tokenCookie = cookieStore.get('token');
+    const userIdCookie = cookieStore.get('userId');
+
+    const token = tokenCookie?.value || null;
+    const userId = userIdCookie?.value || null;
 
     if (!token || !userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    if (process.env.JWT_SECRET) {
-      try {
-        jwt.verify(token, process.env.JWT_SECRET);
-      } catch {
-        return NextResponse.json({ error: 'Invalid Token' }, { status: 401 });
-      }
+    if (!process.env.JWT_SECRET) {
+      return NextResponse.json(
+        { error: 'JWT_SECRET not set' },
+        { status: 500 },
+      );
+    }
+
+    try {
+      jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
+      return NextResponse.json({ error: 'Invalid Token' }, { status: 401 });
     }
 
     const [users] = await db.query(

@@ -33,7 +33,7 @@ export default function Login() {
       className="flex justify-center items-center min-h-screen bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${bgImage.src})` }}
     >
-      <div className="w-full max-w-md bg-opacity-60 backdrop-blur-sm p-6 rounded-4xl shadow-lg">
+      <div className="w-full max-w-md bg-opacity-60 backdrop-blur-sm p-6 rounded-2xl shadow-lg">
         <h2 className="text-2xl font-bold text-center text-gray-700 mb-6">
           Login
         </h2>
@@ -71,9 +71,20 @@ export default function Login() {
           </button>
         </form>
 
-        <GoogleSignIn />
-        <GithubSignIn />
-        <FacebookSignIn />
+        <div className="relative flex items-center my-4">
+          <hr className="w-full border-gray-300" />
+          <span className="absolute left-1/2 -translate-x-1/2  px-2 text-gray-500">
+            OR
+          </span>
+        </div>
+
+        <div className="mt-4 space-y-2">
+          <GoogleSignIn />
+          <div className="flex justify-center space-x-6">
+            <GithubSignIn />
+            <FacebookSignIn />
+          </div>
+        </div>
 
         <div className="mt-4 text-center">
           <p className="text-gray-600">

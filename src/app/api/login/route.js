@@ -37,7 +37,7 @@ export async function POST(req) {
       { expiresIn: '7d' },
     );
 
-    const cookieStore = cookies();
+    const cookieStore = await cookies();
 
     cookieStore.set('token', token, {
       path: '/',
@@ -47,7 +47,7 @@ export async function POST(req) {
       maxAge: 604800,
     });
 
-    cookieStore.set('userId', user.id, {
+    await cookieStore.set('userId', user.id.toString(), {
       path: '/',
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
