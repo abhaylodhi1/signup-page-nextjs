@@ -1,9 +1,12 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect } from 'react';
 import { Briefcase, Calendar, Mail, User, Users } from 'react-feather';
 
 import bgImage from '../../../public/images/background.jpg';
+import EditProfileButton from '../../components/edit/edit';
+import Navbar from '../../components/navbar';
 import useAuthStore from '../store/store';
 
 export default function Profile() {
@@ -23,18 +26,20 @@ export default function Profile() {
       {user ? (
         <div className="w-full max-w-6xl bg-opacity-80 backdrop-blur-xl rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
           <div className=" bg-opacity-70 backdrop-blur-md p-8 flex flex-col items-center text-center w-full md:w-1/3">
-            <img
-              src={user.profile_picture}
+            <Image
+              src={user.profile_picture || '/images/default-profile.png'} // Fallback image
               alt="Profile"
+              width={128}
+              height={128}
               className="w-32 h-32 rounded-full border-4 border-gray-800 shadow-lg mb-4"
+              priority
             />
             <h2 className="text-2xl font-bold text-gray-800 mb-2">
               {user.full_name}
             </h2>
             <p className="text-gray-600 mb-4">{user.department}</p>
-            <button className=" bg-gray-800 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded-full transition">
-              Edit Profile
-            </button>
+
+            <EditProfileButton />
           </div>
 
           <div className="flex-1 p-8">

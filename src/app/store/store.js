@@ -99,6 +99,17 @@ const useAuthStore = create((set) => ({
     }
   },
 
+  updateProfile: async (updatedData) => {
+    try {
+      const response = await api.put('/edit', updatedData);
+      toast.success('Profile updated successfully!');
+      return response.data;
+    } catch (error) {
+      toast.error(error.response?.data?.error || 'Failed to update profile');
+      throw error;
+    }
+  },
+
   loginWithGoogle: async () => {
     window.location.href = '/api/auth/google';
   },

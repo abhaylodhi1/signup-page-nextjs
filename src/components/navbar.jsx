@@ -11,7 +11,7 @@ export default function Navbar() {
   const router = useRouter();
 
   useEffect(() => {
-    fetchUser(); // Fetch user data when component mounts
+    fetchUser();
   }, [fetchUser]);
 
   const handleLogout = () => {
